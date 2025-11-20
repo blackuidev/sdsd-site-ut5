@@ -1,14 +1,14 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import { Header } from '@/components/layout/Header'; // Changed to named import
+import { Footer } from '@/components/layout/Footer'; // Changed to named import
 import { Toaster } from '@/components/ui/toaster';
 
 const RootLayout: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-950 text-white">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow pt-20">
+      <main className="flex-grow">
         <Outlet />
       </main>
       <Footer />
