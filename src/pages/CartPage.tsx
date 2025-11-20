@@ -1,14 +1,15 @@
 import React from 'react';
-import CartDisplay from '@/components/common/CartDisplay';
+import { CartDisplay } from "@/components/common/CartDisplay";
+import RootLayout from '@/layouts/RootLayout';
 
 const CartPage: React.FC = () => {
   return (
-    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 bg-gray-950">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-extrabold text-center mb-12 text-white">Your Shopping Cart</h1>
-        <CartDisplay showCheckoutButton={true} />
+    <RootLayout>
+      <div className="container mx-auto py-8">
+        <h1 className="text-3xl font-bold text-center mb-8">Shopping Cart</h1>
+        <CartDisplay />
       </div>
-    </div>
+    </RootLayout>
   );
 };
 
