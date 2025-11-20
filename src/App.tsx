@@ -1,26 +1,41 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Index from './pages/Index';
-import NotFound from './pages/NotFound';
-import PortfolioPage from './pages/Portfolio'; // Import the new portfolio page
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RootLayout from '@/layouts/RootLayout';
+import HomePage from '@/pages/HomePage';
+import ProductsPage from '@/pages/ProductsPage';
+import ProductDetailPage from '@/pages/ProductDetailPage';
+import LoginPage from '@/pages/LoginPage';
+import SignupPage from '@/pages/SignupPage';
+import CartPage from '@/pages/CartPage';
+import NotFound from '@/pages/NotFound';
+import { CartProvider } from '@/context/CartContext';
+import { Toaster } from '@/components/ui/toaster';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        {/* Simple Navigation Bar */}
-        <nav className="bg-gray-800 p-4 text-white flex justify-center space-x-6">
-          <Link to="/" className="hover:text-gray-300 transition-colors duration-200">Home</Link>
-          <Link to="/portfolio" className="hover:text-gray-300 transition-colors duration-200">Portfolio</Link>
-          {/* Add more navigation links here if needed */}
-        </nav>
-
+      <CartProvider>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/portfolio" element={<PortfolioPage />} /> {/* Add the portfolio route */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<RootLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="signup" element={<SignupPage />} />
+            <Route path="cart" element={<CartPage />} />
+            {/* Example static pages for footer links */}
+            <Route path="about" element={<p className="min-h-screen flex items-center justify-center bg-gray-950 text-white text-3xl">About Us Page</p>} />
+            <Route path="contact" element={<p className="min-h-screen flex items-center justify-center bg-gray-950 text-white text-3xl">Contact Page</p>} />
+            <Route path="faq" element={<p className="min-h-screen flex items-center justify-center bg-gray-950 text-white text-3xl">FAQ Page</p>} />
+            <Route path="shipping" element={<p className="min-h-screen flex items-center justify-center bg-gray-950 text-white text-3xl">Shipping & Returns Page</p>} />
+            <Route path="privacy" element={<p className="min-h-screen flex items-center justify-center bg-gray-950 text-white text-3xl">Privacy Policy Page</p>} />
+            <Route path="terms" element={<p className="min-h-screen flex items-center justify-center bg-gray-950 text-white text-3xl">Terms of Service Page</p>} />
+
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
-      </div>
+        <Toaster />
+      </CartProvider>
     </Router>
   );
 }
