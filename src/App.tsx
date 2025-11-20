@@ -1,36 +1,28 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Index from './pages/Index';
+import NotFound from './pages/NotFound';
+import PortfolioPage from './pages/Portfolio'; // Import the new portfolio page
+import './App.css';
 
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        {/* Simple Navigation Bar */}
+        <nav className="bg-gray-800 p-4 text-white flex justify-center space-x-6">
+          <Link to="/" className="hover:text-gray-300 transition-colors duration-200">Home</Link>
+          <Link to="/portfolio" className="hover:text-gray-300 transition-colors duration-200">Portfolio</Link>
+          {/* Add more navigation links here if needed */}
+        </nav>
 
-const queryClient = new QueryClient();
-
-// =======================================================
-// ✅ Wrapper that hides Header on specific routes
-// =======================================================
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    return (
-        <>
-            {/* {!shouldHideHeader && <Header />} */}
-            {children}
-        </>
-    );
-};
-// =======================================================
-
-const App = () => (
-    <div className="font-primarylw">
-        <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-                <Layout>
-                    <Routes>
-                        <Route path="/" element={<Index />} />
-                    </Routes>
-                </Layout>
-            </BrowserRouter>
-        </QueryClientProvider>
-    </div >
-);
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/portfolio" element={<PortfolioPage />} /> {/* Add the portfolio route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
 
 export default App;
