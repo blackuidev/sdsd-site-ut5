@@ -1,43 +1,107 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { Menu, ShoppingCart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/CartContext';
-import { SparkleNavbar } from '@/components/ui/sparkle-navbar';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
+import { useMobile } from '@/components/hooks/use-mobile';
+import { CartDisplay } from '@/components/common/CartDisplay';
 
-const Header: React.FC = () => {
-  const { cartItemCount } = useCart();
+export function Header() {
+  const isMobile = useMobile();
+
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Products', path: '/products' },
+    { name: 'Portfolio', path: '/portfolio' },
+  ];
 
   return (
-    <SparkleNavbar
-      className="fixed top-0 left-0 right-0 z-50 w-full"
-      items={[
-        { label: 'Home', link: '/' },
-        { label: 'Products', link: '/products' },
-        { label: 'Login', link: '/login' }
-      ]}
-      rightContent={
-        <div className="flex items-center space-x-4">
-          <Link to="/cart" className="relative">
-            <Button variant="ghost" size="icon">
-              <ShoppingCart className="h-5 w-5 text-white" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                  {cartItemCount}
-                </span>
-              )}
-            </Button>
-          </Link>
-          <Link to="/signup">
-            <Button variant="outline" className="text-white border-white hover:bg-white hover:text-black">
-              Sign Up
-            </Button>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center px-4 md:px-6">
+        {/* Brand Logo/Name */}
+        <div className="mr-6 flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 text-lg font-bold">
+            <span className="sr-only">Home</span>
+            <span className="text-xl font-extrabold tracking-tight">BLACKUIDEV</span>
           </Link>
         </div>
-      }
-      logo={<Link to="/" className="text-2xl font-bold text-white">BlackUI Store</Link>}
-    />
-  );
-};
 
-export default Header;
+        {/* Desktop Navigation */}
+        {!isMobile && (
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium flex-grow justify-center">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex items-center space-x-4 ml-auto">
+          <CartDisplay />
+          {!isMobile && (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button size="sm">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
+
+          {/* Mobile Navigation Trigger */}
+          {isMobile && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <SheetClose asChild>
+                  <Link to="/" className="flex items-center space-x-2 text-lg font-bold mb-6">
+                    <span className="text-xl font-extrabold tracking-tight">BLACKUIDEV</span>
+                  </Link>
+                </SheetClose>
+                <nav className="flex flex-col gap-4 text-sm font-medium">
+                  {navLinks.map((link) => (
+                    <SheetClose asChild key={link.name}>
+                      <Link
+                        to={link.path}
+                        className="transition-colors hover:text-foreground/80 text-foreground/60 py-2"
+                      >
+                        {link.name}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  <Separator className="my-2" />
+                  <SheetClose asChild>
+                    <Link to="/login" className="flex items-center gap-2 py-2 text-foreground/60 hover:text-foreground/80">
+                      <User className="h-4 w-4" /> Login
+                    </Link>
+                  </SheetClose>
+                  <SheetClose asChild>
+                    <Link to="/signup" className="flex items-center gap-2 py-2 text-foreground/60 hover:text-foreground/80">
+                      <User className="h-4 w-4" /> Sign Up
+                    </Link>
+                  </SheetClose>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
