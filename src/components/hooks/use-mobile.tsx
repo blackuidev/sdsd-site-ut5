@@ -1,24 +1,22 @@
-import * as React from "react"
+import { useState, useEffect } from 'react';
 
-const MOBILE_BREAKPOINT = 1024
+export function useMobile() {
+  const [isMobile, setIsMobile] = useState(false);
 
-export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
-  )
-
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return
-
+  useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
+      setIsMobile(window.innerWidth < 768); // Example breakpoint for mobile
+    };
 
-    window.addEventListener('resize', checkMobile)
-    checkMobile() // Initial check
-    
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    // Initial check
+    checkMobile();
 
-  return isMobile
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup function
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  return isMobile;
 }
