@@ -1,34 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { AuroraBackground } from '@/components/ui/aurora-background';
-import { ShinyText } from '@/components/ui/shiny-text';
+import { BeamGridBackground } from '@/components/ui/BeamGridBackground'; // Using an existing UI component
 
 const HeroSection: React.FC = () => {
   return (
-    <AuroraBackground>
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 py-20">
-        <ShinyText
-          text="Discover Innovation. Elevate Your Lifestyle."
-          className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 max-w-4xl"
-        />
-        <p className="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl">
-          Explore a curated collection of modern tech, stylish accessories, and essential home goods.
+    <section className="relative w-full h-[60vh] md:h-[70vh] lg:h-[80vh] flex items-center justify-center text-center overflow-hidden">
+      <BeamGridBackground className="absolute inset-0 z-0 opacity-50" />
+      <div className="relative z-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4 drop-shadow-lg">
+          Elevate Your Digital Presence
+        </h1>
+        <p className="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          Crafting exceptional web experiences with cutting-edge design and robust functionality for modern businesses.
         </p>
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <Link to="/products">
-            <Button className="px-8 py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all duration-300 shadow-lg">
-              Shop Now
-            </Button>
-          </Link>
-          <Link to="/about">
-            <Button variant="outline" className="px-8 py-3 text-lg border-white text-white rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-lg">
-              Learn More
-            </Button>
-          </Link>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Button size="lg" className="px-8 py-3 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg">
+            Explore Our Work
+          </Button>
+          <Button size="lg" variant="outline" className="px-8 py-3 text-lg font-semibold border-2 border-gray-400 text-gray-200 hover:bg-gray-700 hover:border-gray-300 transition-colors">
+            Get a Quote
+          </Button>
         </div>
       </div>
-    </AuroraBackground>
+    </section>
   );
 };
 
