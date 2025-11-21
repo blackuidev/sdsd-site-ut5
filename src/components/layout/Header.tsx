@@ -1,39 +1,42 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Logo } from '../ui/Logo'; // Corrected import path
+import { Logo } from '../ui/Logo';
 import { Button } from '../ui/button';
-import { HamburgerMenuOverlay } from '../ui/hamburger-menu-overlay';
-import { SparkleNavbar } from '../ui/sparkle-navbar';
+import { Menu } from 'lucide-react';
+import { CartIcon } from './CartIcon'; // Import CartIcon
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
   return (
-    <SparkleNavbar>
-      <header className="relative z-50 w-full px-4 py-3 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link to="/">
+          <Link to="/" className="flex items-center space-x-2">
             <Logo />
+            <span className="font-bold">Lightswind</span>
           </Link>
+          <nav className="hidden md:flex items-center space-x-4">
+            <Link to="/products" className="text-sm font-medium hover:text-primary transition-colors">
+              Products
+            </Link>
+            <Link to="/projects" className="text-sm font-medium hover:text-primary transition-colors">
+              Projects
+            </Link>
+            <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">
+              About
+            </Link>
+            <Link to="/contact" className="text-sm font-medium hover:text-primary transition-colors">
+              Contact
+            </Link>
+          </nav>
         </div>
-        <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/projects" className="text-sm font-medium hover:text-primary transition-colors">
-            Projects
-          </Link>
-          <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">
-            About
-          </Link>
-          <Link to="/contact" className="text-sm font-medium hover:text-primary transition-colors">
-            Contact
-          </Link>
-          <Button variant="ghost" size="sm">
-            Login
+        <div className="flex items-center space-x-2">
+          <CartIcon /> {/* Add CartIcon here */}
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
           </Button>
-        </nav>
-        <div className="md:hidden">
-          <HamburgerMenuOverlay />
         </div>
-      </header>
-    </SparkleNavbar>
+      </div>
+    </header>
   );
 };
-
-export default Header;
