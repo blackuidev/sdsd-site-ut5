@@ -1,35 +1,65 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCart, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { CartDisplay } from '@/components/common/CartDisplay'; // Assuming CartDisplay exists
+import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
-export const Header: React.FC = () => {
+export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const navItems = [
+    { name: "Home", href: "/" },
+    { name: "Projects", href: "/projects" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="text-xl font-bold">
-          MyStore
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="inline-block font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
+            [Your Name/Logo]
+          </span>
         </Link>
-        <nav className="flex items-center space-x-4">
-          <Link to="/products" className="text-sm font-medium transition-colors hover:text-primary">
-            Products
-          </Link>
-          <Link to="/portfolio" className="text-sm font-medium transition-colors hover:text-primary">
-            Portfolio
-          </Link>
-          <Link to="/cart" className="relative text-sm font-medium transition-colors hover:text-primary">
-            <ShoppingCart className="h-5 w-5" />
-            <CartDisplay /> { /* This component should show cart item count */}
-          </Link>
-          <Link to="/login">
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Login</span>
-            </Button>
-          </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.href}
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              {item.name}
+            </Link>
+          ))}
         </nav>
+
+        {/* Mobile Navigation */}
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <nav className="flex flex-col gap-4 pt-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-lg font-medium hover:text-primary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
-};
+}
