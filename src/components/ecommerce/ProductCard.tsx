@@ -1,62 +1,53 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Product } from '../../types/ecommerce';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { useCart } from '../../context/CartContext';
-import { Star } from 'lucide-react'; // Assuming lucide-react is installed
+import { Product } from '@/types/ecommerce';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { CartContext } from '@/context/CartContext';
+import { toast } from '@/components/ui/use-toast';
 
 interface ProductCardProps {
   product: Product;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addItem } = useCart();
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { addToCart } = useContext(CartContext);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigating if inside a Link
-    e.stopPropagation(); // Stop propagation to parent elements
-    addItem(product);
+  const handleAddToCart = () => {
+    addToCart(product, 1); // Add one quantity by default
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} added to your cart.`,
+    });
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] rounded-lg">
-      <Link to={`/products/${product.id}`} className="block h-full">
-        <CardHeader className="p-0">
-          <div className="relative w-full h-48 overflow-hidden">
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="object-cover w-full h-full"
-            />
-          </div>
-        </CardHeader>
-        <CardContent className="flex-grow p-4">
-          <CardTitle className="text-lg font-semibold mb-2 line-clamp-2">
-            {product.name}
-          </CardTitle>
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-            {product.description}
-          </p>
-          <div className="flex items-center mt-2">
-            {product.rating && (
-              <>
-                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 mr-1" />
-                <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">{product.rating.toFixed(1)}</span>
-                {product.numReviews && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">({product.numReviews} reviews)</span>
-                )}
-              </>
-            )}
-          </div>
-        </CardContent>
+    <Card className="flex flex-col overflow-hidden">
+      <Link to={`/products/${product.id}`} className="block relative h-48 w-full overflow-hidden">
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        />
       </Link>
-      <CardFooter className="flex justify-between items-center p-4 pt-0 mt-auto">
-        <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
-        <Button onClick={handleAddToCart} className="ml-4">
+      <CardHeader className="p-4 pb-2 flex-grow">
+        <CardTitle className="text-lg font-semibold line-clamp-2">
+          <Link to={`/products/${product.id}`} className="hover:underline">
+            {product.name}
+          </Link>
+        </CardTitle>
+        <CardDescription className="text-sm">${product.price.toFixed(2)}</CardDescription>
+      </CardHeader>
+      <CardContent className="p-4 pt-0">
+        {/* Optional: short description or categories */}
+      </CardContent>
+      <CardFooter className="p-4 pt-0">
+        <Button onClick={handleAddToCart} className="w-full">
           Add to Cart
         </Button>
       </CardFooter>
     </Card>
   );
 };
+
+export default ProductCard;

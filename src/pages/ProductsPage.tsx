@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from 'react';
-import { ProductCard } from '../components/ecommerce/ProductCard';
-import { Product } from '../types/ecommerce';
-import { getProducts } from '../services/productService';
-import { Skeleton } from '../components/ui/skeleton'; // Assuming skeleton is available
+import { Product } from '@/types/ecommerce';
+import { getAllProducts } from '@/services/productService';
+import ProductCard from '@/components/ecommerce/ProductCard';
 
-export const ProductsPage: React.FC = () => {
+const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
-      const data = await getProducts();
-      setProducts(data);
-      setLoading(false);
+      try {
+        const data = await getAllProducts();
+        setProducts(data);
+      } catch (err) {
+        setError('Failed to fetch products.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProducts();
   }, []);
 
+  if (loading) {
+    return <div className="container py-8 text-center">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="container py-8 text-center text-red-500">{error}</div>;
+  }
+
   return (
-    <div className="container py-16 min-h-screen">
-      <h1 className="text-5xl font-extrabold text-center mb-12">Our Products</h1>
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {[...Array(8)].map((_, i) => (
-            <Skeleton key={i} className="h-[400px] w-full rounded-lg" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
-      {products.length === 0 && !loading && (
-        <p className="text-center text-gray-500 dark:text-gray-400 mt-16 text-lg">No products found.</p>
-      )}
+    <div className="container py-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">Our Products</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
     </div>
   );
 };
+
+export default ProductsPage;

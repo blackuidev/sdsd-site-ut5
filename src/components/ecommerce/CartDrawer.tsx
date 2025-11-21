@@ -1,94 +1,93 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { Button } from '../ui/button';
-import { useCart } from '../../context/CartContext';
-import { ShoppingCart, XCircle, Minus, Plus } from 'lucide-react'; // Assuming lucide-react is installed
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { CartContext } from '@/context/CartContext';
+import { Trash2 } from 'lucide-react';
 
 interface CartDrawerProps {
-  children: React.ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export const CartDrawer: React.FC<CartDrawerProps> = ({ children }) => {
-  const { cart, removeItem, updateQuantity } = useCart();
-
-  const handleQuantityChange = (id: string, newQuantity: number) => {
-    updateQuantity(id, newQuantity);
-  };
+const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
+  const { cartItems, removeFromCart, getCartTotal } = useContext(CartContext);
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="flex flex-col w-full sm:max-w-md">
-        <SheetHeader className="pb-4 border-b">
-          <SheetTitle className="flex items-center gap-2">
-            <ShoppingCart className="w-6 h-6" /> Your Cart ({cart.totalItems})
-          </SheetTitle>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="flex flex-col">
+        <SheetHeader>
+          <SheetTitle>Your Cart</SheetTitle>
+          <SheetDescription>
+            {cartItems.length > 0 ? `You have ${cartItems.length} items in your cart.` : 'Your cart is empty.'}
+          </SheetDescription>
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto py-4">
-          {cart.items.length === 0 ? (
-            <p className="text-center text-gray-500 dark:text-gray-400 mt-8">Your cart is empty.</p>
+        <ScrollArea className="flex-grow py-4 pr-4">
+          {cartItems.length === 0 ? (
+            <div className="text-center text-muted-foreground">
+              No items in cart.
+            </div>
           ) : (
-            <ul className="space-y-4">
-              {cart.items.map((item) => (
-                <li key={item.id} className="flex items-center gap-4 border-b pb-4 last:border-b-0 last:pb-0">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.name}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-base line-clamp-1">{item.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      ${item.price.toFixed(2)} x {item.quantity}
-                    </p>
-                    <div className="flex items-center mt-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      <span className="mx-2 text-sm font-medium">{item.quantity}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+            <div className="space-y-4">
+              {cartItems.map((item) => (
+                <div key={item.product.id} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={item.product.imageUrl}
+                      alt={item.product.name}
+                      className="w-16 h-16 object-cover rounded-md"
+                    />
+                    <div>
+                      <h4 className="font-medium">{item.product.name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {item.quantity} x ${item.product.price.toFixed(2)}
+                      </p>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeItem(item.id)}
-                    className="text-red-500 hover:text-red-600"
-                  >
-                    <XCircle className="h-5 w-5" />
-                  </Button>
-                </li>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-semibold">${(item.quantity * item.product.price).toFixed(2)}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFromCart(item.product.id)}
+                      className="h-8 w-8"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
-        </div>
-        <div className="border-t pt-4">
-          <div className="flex justify-between items-center text-lg font-semibold mb-4">
-            <span>Subtotal:</span>
-            <span>${cart.subtotal.toFixed(2)}</span>
+        </ScrollArea>
+        <SheetFooter className="mt-auto pt-4 border-t">
+          <div className="flex justify-between items-center w-full mb-4">
+            <span className="text-lg font-semibold">Total:</span>
+            <span className="text-lg font-bold">${getCartTotal().toFixed(2)}</span>
           </div>
-          <Button asChild className="w-full">
-            <Link to="/checkout">Proceed to Checkout</Link>
-          </Button>
-          <Button asChild variant="outline" className="w-full mt-2">
-            <Link to="/cart">View Full Cart</Link>
-          </Button>
-        </div>
+          <SheetClose asChild>
+            <Link to="/cart" className="w-full">
+              <Button className="w-full mb-2">View Full Cart</Button>
+            </Link>
+          </SheetClose>
+          <SheetClose asChild>
+            <Link to="/checkout" className="w-full">
+              <Button className="w-full">Proceed to Checkout</Button>
+            </Link>
+          </SheetClose>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
 };
+
+export default CartDrawer;

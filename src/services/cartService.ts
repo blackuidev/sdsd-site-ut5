@@ -1,25 +1,52 @@
-// This service is mostly a placeholder as cart logic is handled in CartContext
-// but it could be extended for persistence or backend integration.
+import { Product } from '@/types/ecommerce';
+import { CartItem } from '@/context/CartContext';
 
-import { CartItem } from '../types/ecommerce';
+const CART_STORAGE_KEY = 'ecommerce_cart';
 
-export const saveCart = async (cart: CartItem[]): Promise<void> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('Cart saved (mock):', cart);
-      // In a real app, this would send cart data to a backend
-      resolve();
-    }, 100);
-  });
+// Helper to get cart from local storage
+export const getCart = (): CartItem[] => {
+  try {
+    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+    return storedCart ? JSON.parse(storedCart) : [];
+  } catch (error) {
+    console.error('Failed to parse cart from local storage', error);
+    return [];
+  }
 };
 
-export const loadCart = async (): Promise<CartItem[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('Cart loaded (mock)');
-      // In a real app, this would fetch cart data from a backend
-      // For now, return an empty array or from localStorage if desired
-      resolve([]);
-    }, 100);
-  });
+// Helper to save cart to local storage
+export const saveCart = (cart: CartItem[]): void => {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch (error) {
+    console.error('Failed to save cart to local storage', error);
+  }
+};
+
+export const addToCart = (currentCart: CartItem[], product: Product, quantity: number): CartItem[] => {
+  const existingItemIndex = currentCart.findIndex((item) => item.product.id === product.id);
+
+  if (existingItemIndex > -1) {
+    // If item exists, update quantity
+    const updatedCart = [...currentCart];
+    updatedCart[existingItemIndex].quantity += quantity;
+    return updatedCart;
+  } else {
+    // If item doesn't exist, add new item
+    return [...currentCart, { product, quantity }];
+  }
+};
+
+export const removeFromCart = (currentCart: CartItem[], productId: string): CartItem[] => {
+  return currentCart.filter((item) => item.product.id !== productId);
+};
+
+export const updateQuantity = (currentCart: CartItem[], productId: string, newQuantity: number): CartItem[] => {
+  if (newQuantity <= 0) {
+    return removeFromCart(currentCart, productId);
+  }
+
+  return currentCart.map((item) =>
+    item.product.id === productId ? { ...item, quantity: newQuantity } : item
+  );
 };
