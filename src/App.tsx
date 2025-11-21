@@ -1,31 +1,30 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import RootLayout from './layouts/RootLayout';
-import { HomePage } from './pages/HomePage';
-import { ProjectsPage } from './pages/ProjectsPage';
-import { PortfolioDetailPage } from './pages/PortfolioDetailPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { NotFound } from './pages/NotFound';
-import { Toaster } from './components/ui/toaster';
-import { ProductsPage } from './pages/ProductsPage'; // Import ProductsPage
-import { CheckoutPage } from './pages/CheckoutPage'; // Import CheckoutPage
+import { RootLayout } from '@/layouts/RootLayout';
+import { HomePage } from '@/pages/HomePage';
+import { ProductsPage } from '@/pages/ProductsPage';
+import { ProductDetailPage } from '@/pages/ProductDetailPage'; // New route
+import { CartPage } from '@/pages/CartPage'; // New route
+import { CheckoutPage } from '@/pages/CheckoutPage';
+import { AboutPage } from '@/pages/AboutPage';
+import { ContactPage } from '@/pages/ContactPage';
+import { NotFound } from '@/pages/NotFound';
 
 function App() {
   return (
     <Router>
-      <RootLayout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<ProductsPage />} /> {/* New Products Route */}
-          <Route path="/checkout" element={<CheckoutPage />} /> {/* New Checkout Route */}
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/projects/:id" element={<PortfolioDetailPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id" element={<ProductDetailPage />} /> {/* New route */}
+          <Route path="cart" element={<CartPage />} /> {/* New route */}
+          <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
-      </RootLayout>
+        </Route>
+      </Routes>
     </Router>
   );
 }

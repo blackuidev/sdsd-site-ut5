@@ -1,62 +1,52 @@
 import React from 'react';
-import { Product } from '../../types/ecommerce';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Image } from 'lucide-react'; // Using lucide-react for icons
-import { useToast } from '../hooks/use-toast';
-import { addToCart } from '../../services/cartService';
+import { Product } from '@/types/ecommerce';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { useCart } from '@/context/CartContext'; // Import useCart
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
-  const { toast } = useToast();
-
-  const handleAddToCart = () => {
-    onAddToCart(product);
-    toast({
-      title: "Added to cart!",
-      description: `${product.name} has been added to your cart.`,
-    });
-  };
+export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { addToCart } = useCart();
 
   return (
-    <Card className="flex flex-col overflow-hidden">
-      <div className="relative w-full h-48 bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <Image className="h-12 w-12 text-gray-400" />
-        )}
+    <div className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-950">
+      <Link to={`/products/${product.id}`} className="block">
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          width={400}
+          height={300}
+          className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </Link>
+      <div className="p-4">
+        <Link to={`/products/${product.id}`} className="block">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors duration-200">
+            {product.name}
+          </h3>
+        </Link>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
+          {product.description}
+        </p>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-xl font-bold text-gray-900 dark:text-gray-50">
+            ${product.price.toFixed(2)}
+          </span>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => addToCart(product)}
+            className="group relative inline-flex h-9 items-center justify-center overflow-hidden rounded-md bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 font-medium text-gray-900 shadow-md transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:text-white"
+          >
+            <span className="relative rounded-md bg-white px-3 py-1.5 transition-all duration-300 ease-in group-hover:bg-opacity-0 dark:bg-gray-950">
+              Add to Cart
+            </span>
+          </Button>
+        </div>
       </div>
-      <CardHeader>
-        <CardTitle>{product.name}</CardTitle>
-        <CardDescription className="line-clamp-2">{product.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-xl font-semibold">${product.price.toFixed(2)}</p>
-        {product.stock <= 5 && product.stock > 0 && (
-          <p className="text-sm text-orange-500">Only {product.stock} left in stock!</p>
-        )}
-        {product.stock === 0 && (
-          <p className="text-sm text-red-500">Out of Stock</p>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button
-          onClick={handleAddToCart}
-          className="w-full"
-          disabled={product.stock === 0}
-        >
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-        </Button>
-      </CardFooter>
-    </Card>
+    </div>
   );
 };

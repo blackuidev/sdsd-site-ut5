@@ -1,54 +1,68 @@
-import RootLayout from "../layouts/RootLayout";
-import HeroSection from "../components/common/HeroSection";
-import { portfolioProjects } from "../data/portfolio-projects";
-import ProjectCard from "../components/portfolio/ProjectCard";
-import { Button } from "../components/ui/button";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { HeroSection } from '@/components/common/HeroSection'; // Assuming HeroSection exists
+import { ProductCard } from '@/components/ecommerce/ProductCard';
+import { products } from '@/data/products'; // Import mock products
+import { Button } from '@/components/ui/button';
+import { ShinyText } from '@/components/ui/shiny-text'; // For animation
+import { AuroraBackground } from '@/components/ui/aurora-background'; // For background effect
+import { AuroraShader } from '@/components/ui/aurora-shader'; // For background effect
 
-export default function HomePage() {
-  const featuredProjects = portfolioProjects.slice(0, 3); // Display top 3 projects
+export function HomePage() {
+  const featuredProducts = products.slice(0, 3); // Display first 3 products as featured
 
   return (
-    <RootLayout>
-      <HeroSection
-        title="Hi, I'm [Your Name/Company Name]"
-        subtitle="Crafting immersive digital experiences with passion and precision."
-        description="I specialize in building modern web applications, focusing on clean code, responsive design, and user-centric interfaces. Let's create something amazing together."
-        ctaText="View My Work"
-        ctaLink="/projects"
-      />
+    <div className="relative overflow-hidden">
+      {/* Hero Section */}
+      <AuroraBackground className="absolute inset-0 z-0">
+        <AuroraShader />
+        <HeroSection
+          title={
+            <ShinyText text="Innovate. Create. Elevate." className="text-4xl md:text-6xl lg:text-7xl font-bold" />
+          }
+          subtitle="Discover the future of technology and design with our exclusive collection."
+          primaryCta={
+            <Button asChild size="lg" className="relative group overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <Link to="/products">
+                <span className="relative z-10">Explore Products</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+              </Link>
+            </Button>
+          }
+          secondaryCta={
+            <Button asChild variant="outline" size="lg" className="relative group overflow-hidden border-2 border-primary text-primary shadow-md transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-lg">
+              <Link to="/about">
+                <span className="relative z-10">Learn More</span>
+                <span className="absolute inset-0 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+              </Link>
+            </Button>
+          }
+        />
+      </AuroraBackground>
 
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-orange-500">
-            Featured Projects
+      {/* Featured Products Section */}
+      <section className="relative z-10 py-16 md:py-24 bg-white dark:bg-gray-900">
+        <div className="container mx-auto px-4 md:px-6">
+          <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-gray-50 md:text-4xl">
+            Featured Products
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          <div className="text-center mt-12">
-            <Button asChild size="lg">
-              <Link to="/projects">View All Projects</Link>
+          <div className="mt-12 text-center">
+            <Button asChild size="lg" variant="outline" className="relative group overflow-hidden border-2 border-gray-300 text-gray-700 shadow-md transition-all duration-300 hover:bg-gray-100 hover:text-gray-900 hover:shadow-lg dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-50">
+              <Link to="/products">
+                <span className="relative z-10">View All Products</span>
+                <span className="absolute inset-0 bg-gray-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-800"></span>
+              </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
-            Ready to start your next project?
-          </h2>
-          <p className="text-xl text-gray-700 dark:text-gray-300 mb-10 max-w-3xl mx-auto">
-            I'm always open to new opportunities and collaborations. Feel free to reach out and discuss your ideas.
-          </p>
-          <Button asChild size="lg" className="px-8 py-3 text-lg">
-            <Link to="/contact">Contact Me</Link>
-          </Button>
-        </div>
-      </section>
-    </RootLayout>
+      {/* Add more sections as needed, e.g., testimonials, categories, etc. */}
+    </div>
   );
 }

@@ -1,20 +1,20 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from '@/components/layout/Header';
+import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { Toaster } from '@/components/ui/toaster';
+import { CartProvider } from '@/context/CartContext'; // Import CartProvider
+import { Toaster } from '@/components/ui/toaster'; // Import Toaster
 
-const RootLayout = () => {
+export function RootLayout() {
   return (
-    <>
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
-      <Toaster />
-    </>
+    <CartProvider> {/* Wrap the entire layout with CartProvider */}
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-grow">
+          <Outlet />
+        </main>
+        <Footer />
+        <Toaster /> {/* Add Toaster for notifications */}
+      </div>
+    </CartProvider>
   );
-};
-
-export default RootLayout;
+}

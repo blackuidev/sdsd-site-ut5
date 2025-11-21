@@ -1,0 +1,58 @@
+import { Product } from '@/types/ecommerce';
+
+export const products: Product[] = [
+  {
+    id: 'p1',
+    name: 'Quantum Core Processor',
+    description: 'Next-gen processor with quantum computing capabilities. Unmatched speed and efficiency.',
+    price: 1299.99,
+    imageUrl: 'https://images.unsplash.com/photo-1593642532400-2670e3dc8007?q=80&w=2950&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    category: 'Processors',
+    stock: 10,
+  },
+  {
+    id: 'p2',
+    name: 'Aetheria VR Headset',
+    description: 'Immersive virtual reality experience with crystal-clear optics and haptic feedback.',
+    price: 799.00,
+    imageUrl: 'https://images.unsplash.com/photo-1596558450631-628456208630?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    category: 'VR',
+    stock: 25,
+  },
+  {
+    id: 'p3',
+    name: 'Nebula Smartwatch',
+    description: 'Elegant smartwatch with advanced health tracking and seamless smartphone integration.',
+    price: 249.50,
+    imageUrl: 'https://images.unsplash.com/photo-1546868832-75513220556f?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    category: 'Wearables',
+    stock: 50,
+  },
+  {
+    id: 'p4',
+    name: 'Chrono-Shift Keyboard',
+    description: 'Mechanical keyboard with customizable RGB lighting and ultra-responsive keys.',
+    price: 189.99,
+    imageUrl: 'https://images.unsplash.com/photo-1618384877798-5a7f23075593?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    category: 'Peripherals',
+    stock: 30,
+  },
+  {
+    id: 'p5',
+    name: 'Sonic Bloom Speakers',
+    description: 'High-fidelity wireless speakers with deep bass and crystal-clear treble.',
+    price: 399.00,
+    imageUrl: 'https://images.unsplash.com/photo-1545128389-982855f84976?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    category: 'Audio',
+    stock: 15,
+  },
+  {
+    id: 'p6',
+    name: 'Data Stream SSD',
+    description: 'Ultra-fast NVMe SSD for rapid data access and storage. Available in 1TB and 2TB.',
+    price: 159.99,
+    imageUrl: 'https://images.unsplash.com/photo-1579737494303-a3093223126d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    category: 'Storage',
+    stock: 40,
+  },
+];
