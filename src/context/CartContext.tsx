@@ -1,133 +1,122 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { CartItem, Product } from '@/types/ecommerce';
-import { useToast } from '@/components/hooks/use-toast'; // Assuming this hook exists
+import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { CartItem, Product } from '../types/ecommerce';
+
+interface CartState {
+  items: CartItem[];
+  totalItems: number;
+  subtotal: number;
+}
+
+type CartAction =
+  | { type: 'ADD_ITEM'; payload: Product }
+  | { type: 'REMOVE_ITEM'; payload: string } // payload is product id
+  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
+  | { type: 'CLEAR_CART' }
+  | { type: 'SET_CART'; payload: CartItem[] };
+
+const initialState: CartState = {
+  items: [],
+  totalItems: 0,
+  subtotal: 0,
+};
+
+const cartReducer = (state: CartState, action: CartAction): CartState => {
+  switch (action.type) {
+    case 'ADD_ITEM': {
+      const product = action.payload;
+      const existingItem = state.items.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        return {
+          ...state,
+          items: state.items.map((item) =>
+            item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          items: [...state.items, { ...product, quantity: 1 }],
+        };
+      }
+    }
+    case 'REMOVE_ITEM':
+      return {
+        ...state,
+        items: state.items.filter((item) => item.id !== action.payload),
+      };
+    case 'UPDATE_QUANTITY':
+      return {
+        ...state,
+        items: state.items
+          .map((item) =>
+            item.id === action.payload.id
+              ? { ...item, quantity: action.payload.quantity }
+              : item
+          )
+          .filter((item) => item.quantity > 0), // Remove if quantity becomes 0
+      };
+    case 'CLEAR_CART':
+      return initialState;
+    case 'SET_CART':
+      return {
+        ...state,
+        items: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 interface CartContextType {
-  cartItems: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  cart: CartState;
+  addItem: (product: Product) => void;
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  cartTotal: number;
-  cartItemCount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedCart = localStorage.getItem('cart');
-      return savedCart ? JSON.parse(savedCart) : [];
-    }
-    return [];
-  });
-  const { toast } = useToast();
+  const [state, dispatch] = useReducer(cartReducer, initialState);
 
+  // Recalculate total items and subtotal whenever items change
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cart', JSON.stringify(cartItems));
+    const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    dispatch({ type: 'SET_CART', payload: state.items.map(item => ({...item, quantity: item.quantity})) }); // Trigger re-render with updated values
+    state.totalItems = totalItems;
+    state.subtotal = subtotal;
+  }, [state.items]);
+
+  // Load cart from localStorage on initial mount
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      try {
+        const parsedCart: CartItem[] = JSON.parse(storedCart);
+        dispatch({ type: 'SET_CART', payload: parsedCart });
+      } catch (error) {
+        console.error('Failed to parse cart from localStorage', error);
+      }
     }
-  }, [cartItems]);
+  }, []);
 
-  const addToCart = (product: Product, quantity: number = 1) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + quantity;
-        if (newQuantity > product.stock) {
-            toast({
-                title: 'Out of Stock!',
-                description: `Cannot add more than ${product.stock} of ${product.name} to cart.`,
-                variant: 'destructive',
-            });
-            return prevItems;
-        }
-        toast({
-            title: 'Item Updated',
-            description: `${product.name} quantity updated in cart.`,
-        });
-        return prevItems.map((item) =>
-          item.id === product.id ? { ...item, quantity: newQuantity } : item
-        );
-      } else {
-        if (quantity > product.stock) {
-            toast({
-                title: 'Out of Stock!',
-                description: `Cannot add more than ${product.stock} of ${product.name} to cart.`,
-                variant: 'destructive',
-            });
-            return prevItems;
-        }
-        toast({
-            title: 'Item Added',
-            description: `${product.name} added to cart.`,
-        });
-        return [...prevItems, { ...product, quantity }];
-      }
-    });
-  };
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(state.items));
+  }, [state.items]);
 
-  const removeFromCart = (productId: string) => {
-    setCartItems((prevItems) => {
-      const item = prevItems.find(i => i.id === productId);
-      if (item) {
-        toast({
-            title: 'Item Removed',
-            description: `${item.name} removed from cart.`,
-        });
-      }
-      return prevItems.filter((item) => item.id !== productId);
-    });
-  };
 
-  const updateQuantity = (productId: string, quantity: number) => {
-    setCartItems((prevItems) => {
-      const itemToUpdate = prevItems.find(item => item.id === productId);
-      if (itemToUpdate && quantity > itemToUpdate.stock) {
-          toast({
-              title: 'Out of Stock!',
-              description: `Cannot add more than ${itemToUpdate.stock} of ${itemToUpdate.name} to cart.`,
-              variant: 'destructive',
-          });
-          return prevItems;
-      }
-      if (quantity <= 0) {
-        return prevItems.filter((item) => item.id !== productId);
-      }
-      toast({
-          title: 'Quantity Updated',
-          description: `Quantity for ${itemToUpdate?.name || 'item'} updated.`,
-      });
-      return prevItems.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      );
-    });
-  };
-
-  const clearCart = () => {
-    setCartItems([]);
-    toast({
-        title: 'Cart Cleared',
-        description: 'All items removed from your cart.',
-    });
-  };
-
-  const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  const cartItemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
+  const addItem = (product: Product) => dispatch({ type: 'ADD_ITEM', payload: product });
+  const removeItem = (id: string) => dispatch({ type: 'REMOVE_ITEM', payload: id });
+  const updateQuantity = (id: string, quantity: number) =>
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+  const clearCart = () => dispatch({ type: 'CLEAR_CART' });
 
   return (
-    <CartContext.Provider
-      value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        cartTotal,
-        cartItemCount,
-      }}
-    >
+    <CartContext.Provider value={{ cart: state, addItem, removeItem, updateQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );

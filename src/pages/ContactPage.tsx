@@ -1,50 +1,49 @@
-import RootLayout from "../layouts/RootLayout";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { Button } from "../components/ui/button";
+import React from 'react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Textarea } from '../components/ui/textarea';
+import { Label } from '../components/ui/label';
 
-export default function ContactPage() {
+export const ContactPage: React.FC = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert('Thank you for your message! We will get back to you shortly.');
+    // In a real application, you would send this to a backend service
+  };
+
   return (
-    <RootLayout>
-      <div className="container mx-auto py-16 px-4">
-        <h1 className="text-5xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-600">
-          Get In Touch
-        </h1>
-        <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
-          <p className="text-center text-lg mb-8 text-gray-600 dark:text-gray-300">
-            Have a project idea, a question, or just want to say hello? Fill out the form below, and I'll get back to you as soon as possible.
-          </p>
-          <form className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Name
-              </label>
-              <Input id="name" type="text" placeholder="Your Name" className="w-full" />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Email
-              </label>
-              <Input id="email" type="email" placeholder="your@email.com" className="w-full" />
-            </div>
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Subject
-              </label>
-              <Input id="subject" type="text" placeholder="Subject of your message" className="w-full" />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Message
-              </label>
-              <Textarea id="message" placeholder="Your message..." rows={5} className="w-full" />
-            </div>
-            <Button type="submit" className="w-full py-3 text-lg">
-              Send Message
-            </Button>
-          </form>
+    <div className="container py-16 min-h-screen">
+      <h1 className="text-5xl font-extrabold text-center mb-12">Contact Us</h1>
+      <div className="max-w-2xl mx-auto bg-card p-8 rounded-lg shadow-lg">
+        <p className="text-lg text-muted-foreground mb-6 text-center">
+          Have questions or need assistance? Reach out to us using the form below, or find our contact details.
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" type="text" placeholder="Your Name" required />
+          </div>
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="your@example.com" required />
+          </div>
+          <div>
+            <Label htmlFor="subject">Subject</Label>
+            <Input id="subject" type="text" placeholder="Subject of your inquiry" required />
+          </div>
+          <div>
+            <Label htmlFor="message">Message</Label>
+            <Textarea id="message" placeholder="Type your message here." rows={5} required />
+          </div>
+          <Button type="submit" className="w-full">
+            Send Message
+          </Button>
+        </form>
+        <div className="mt-8 text-center text-muted-foreground">
+          <p>Email: <a href="mailto:support@ecommerce.com" className="text-primary hover:underline">support@ecommerce.com</a></p>
+          <p>Phone: <a href="tel:+1234567890" className="text-primary hover:underline">+1 (234) 567-890</a></p>
         </div>
       </div>
-    </RootLayout>
+    </div>
   );
-}
+};

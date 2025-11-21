@@ -1,68 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { HeroSection } from '@/components/common/HeroSection'; // Assuming HeroSection exists
-import { ProductCard } from '@/components/ecommerce/ProductCard';
-import { products } from '@/data/products'; // Import mock products
-import { Button } from '@/components/ui/button';
-import { ShinyText } from '@/components/ui/shiny-text'; // For animation
-import { AuroraBackground } from '@/components/ui/aurora-background'; // For background effect
-import { AuroraShader } from '@/components/ui/aurora-shader'; // For background effect
+import { HeroSection } from '../components/common/HeroSection';
+import { ProductCard } from '../components/ecommerce/ProductCard';
+import { Product } from '../types/ecommerce';
+import { getProducts } from '../services/productService';
+import { Button } from '../components/ui/button';
+import { Skeleton } from '../components/ui/skeleton'; // Assuming skeleton is available
 
-export function HomePage() {
-  const featuredProducts = products.slice(0, 3); // Display first 3 products as featured
+export const HomePage: React.FC = () => {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const allProducts = await getProducts();
+      // Take the first 3 products as featured
+      setFeaturedProducts(allProducts.slice(0, 3));
+      setLoading(false);
+    };
+    fetchProducts();
+  }, []);
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Hero Section */}
-      <AuroraBackground className="absolute inset-0 z-0">
-        <AuroraShader />
-        <HeroSection
-          title={
-            <ShinyText text="Innovate. Create. Elevate." className="text-4xl md:text-6xl lg:text-7xl font-bold" />
-          }
-          subtitle="Discover the future of technology and design with our exclusive collection."
-          primaryCta={
-            <Button asChild size="lg" className="relative group overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
-              <Link to="/products">
-                <span className="relative z-10">Explore Products</span>
-                <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-              </Link>
-            </Button>
-          }
-          secondaryCta={
-            <Button asChild variant="outline" size="lg" className="relative group overflow-hidden border-2 border-primary text-primary shadow-md transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-lg">
-              <Link to="/about">
-                <span className="relative z-10">Learn More</span>
-                <span className="absolute inset-0 bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-              </Link>
-            </Button>
-          }
-        />
-      </AuroraBackground>
+    <div className="flex flex-col min-h-screen">
+      <HeroSection
+        title="Discover the Future of Tech"
+        subtitle="Explore cutting-edge gadgets and innovative solutions for your modern lifestyle."
+        ctaText="Shop Now"
+        ctaLink="/products"
+        imageUrl="https://images.unsplash.com/photo-1510511459019-5fda7724fd8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      />
 
-      {/* Featured Products Section */}
-      <section className="relative z-10 py-16 md:py-24 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="mb-12 text-center text-3xl font-bold text-gray-900 dark:text-gray-50 md:text-4xl">
-            Featured Products
-          </h2>
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="container py-16">
+        <h2 className="text-4xl font-bold text-center mb-12">Featured Products</h2>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-[400px] w-full rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          <div className="mt-12 text-center">
-            <Button asChild size="lg" variant="outline" className="relative group overflow-hidden border-2 border-gray-300 text-gray-700 shadow-md transition-all duration-300 hover:bg-gray-100 hover:text-gray-900 hover:shadow-lg dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-50">
-              <Link to="/products">
-                <span className="relative z-10">View All Products</span>
-                <span className="absolute inset-0 bg-gray-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-800"></span>
-              </Link>
-            </Button>
-          </div>
+        )}
+        <div className="text-center mt-12">
+          <Button asChild size="lg">
+            <Link to="/products">View All Products</Link>
+          </Button>
         </div>
       </section>
 
-      {/* Add more sections as needed, e.g., testimonials, categories, etc. */}
+      {/* Add more sections like testimonials, categories, etc. */}
     </div>
   );
-}
+};

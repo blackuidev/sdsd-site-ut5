@@ -1,22 +1,20 @@
-import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { products } from '../data/products';
 import { Product } from '../types/ecommerce';
 
-const productsCollectionRef = collection(db, 'products');
-
 export const getProducts = async (): Promise<Product[]> => {
-  const querySnapshot = await getDocs(productsCollectionRef);
-  return querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  })) as Product[];
+  // Simulate API call delay
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(products);
+    }, 500);
+  });
 };
 
-export const getProductById = async (id: string): Promise<Product | null> => {
-  const docRef = doc(db, 'products', id);
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() } as Product;
-  }
-  return null;
+export const getProductById = async (id: string): Promise<Product | undefined> => {
+  // Simulate API call delay
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(products.find((product) => product.id === id));
+    }, 300);
+  });
 };

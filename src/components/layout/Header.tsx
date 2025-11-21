@@ -1,37 +1,45 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { User as UserIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CartDrawer } from '../ecommerce/CartDrawer';
 import { CartIcon } from './CartIcon';
+import { Logo } from '../ui/Logo'; // Assuming Logo is a simple component
+import { Button } from '../ui/button'; // Assuming button is available
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="text-2xl font-bold">
-          YourBrand
-        </Link>
-        <nav className="flex items-center space-x-4">
-          <Link to="/products" className="text-sm font-medium transition-colors hover:text-primary">
-            Products
+      <div className="container flex h-14 items-center justify-between">
+        <div className="flex items-center">
+          <Link to="/" className="flex items-center gap-2 mr-6">
+            <Logo className="h-6 w-6" />
+            <span className="font-bold text-lg">E-commerce Site</span>
           </Link>
-          <Link to="/about" className="text-sm font-medium transition-colors hover:text-primary">
-            About
-          </Link>
-          <Link to="/contact" className="text-sm font-medium transition-colors hover:text-primary">
-            Contact
-          </Link>
-          <Link to="/profile">
+          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
+            <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
+              Home
+            </Link>
+            <Link to="/products" className="text-sm font-medium transition-colors hover:text-primary">
+              Products
+            </Link>
+            <Link to="/about" className="text-sm font-medium transition-colors hover:text-primary">
+              About
+            </Link>
+            <Link to="/contact" className="text-sm font-medium transition-colors hover:text-primary">
+              Contact
+            </Link>
+          </nav>
+        </div>
+        <div className="flex items-center gap-4">
+          <CartDrawer>
             <Button variant="ghost" size="icon">
-              <UserIcon className="h-5 w-5" />
-              <span className="sr-only">Profile</span>
+              <CartIcon />
+              <span className="sr-only">Shopping Cart</span>
             </Button>
-          </Link>
-          <CartIcon />
-        </nav>
+          </CartDrawer>
+          {/* Add Auth buttons here later */}
+          {/* <Button variant="outline">Sign In</Button> */}
+        </div>
       </div>
     </header>
   );
 };
-
-export default Header;

@@ -1,52 +1,62 @@
 import React from 'react';
-import { Product } from '@/types/ecommerce';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useCart } from '@/context/CartContext'; // Import useCart
+import { Product } from '../../types/ecommerce';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { useCart } from '../../context/CartContext';
+import { Star } from 'lucide-react'; // Assuming lucide-react is installed
 
 interface ProductCardProps {
   product: Product;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart } = useCart();
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigating if inside a Link
+    e.stopPropagation(); // Stop propagation to parent elements
+    addItem(product);
+  };
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg dark:border-gray-800 dark:bg-gray-950">
-      <Link to={`/products/${product.id}`} className="block">
-        <img
-          src={product.imageUrl}
-          alt={product.name}
-          width={400}
-          height={300}
-          className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-      </Link>
-      <div className="p-4">
-        <Link to={`/products/${product.id}`} className="block">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 group-hover:text-primary transition-colors duration-200">
+    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.02] rounded-lg">
+      <Link to={`/products/${product.id}`} className="block h-full">
+        <CardHeader className="p-0">
+          <div className="relative w-full h-48 overflow-hidden">
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="flex-grow p-4">
+          <CardTitle className="text-lg font-semibold mb-2 line-clamp-2">
             {product.name}
-          </h3>
-        </Link>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
-          {product.description}
-        </p>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-xl font-bold text-gray-900 dark:text-gray-50">
-            ${product.price.toFixed(2)}
-          </span>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => addToCart(product)}
-            className="group relative inline-flex h-9 items-center justify-center overflow-hidden rounded-md bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 font-medium text-gray-900 shadow-md transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:text-white"
-          >
-            <span className="relative rounded-md bg-white px-3 py-1.5 transition-all duration-300 ease-in group-hover:bg-opacity-0 dark:bg-gray-950">
-              Add to Cart
-            </span>
-          </Button>
-        </div>
-      </div>
-    </div>
+          </CardTitle>
+          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+            {product.description}
+          </p>
+          <div className="flex items-center mt-2">
+            {product.rating && (
+              <>
+                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 mr-1" />
+                <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">{product.rating.toFixed(1)}</span>
+                {product.numReviews && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400">({product.numReviews} reviews)</span>
+                )}
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Link>
+      <CardFooter className="flex justify-between items-center p-4 pt-0 mt-auto">
+        <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
+        <Button onClick={handleAddToCart} className="ml-4">
+          Add to Cart
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
